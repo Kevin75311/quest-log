@@ -110,6 +110,12 @@
         if (a.status === 'doing' || a.status === 'todo') { if (s.status !== 'done') s.status = a.status; }
         if (typeof a.move === 'number') { const i = l.steps.indexOf(s), j = Math.max(0, Math.min(l.steps.length - 1, i + a.move)); l.steps.splice(i, 1); l.steps.splice(j, 0, s); }
         msg = `quest(${l.id}): edit ${s.id}`;
+        if (a.toLine && a.toLine !== l.id) { // move the step (same ID) to another mission line
+          const t = findLine(st, a.toLine); l.steps = l.steps.filter(x => x !== s);
+          const at = Number.isInteger(a.toIndex) ? Math.max(0, Math.min(t.steps.length, a.toIndex)) : t.steps.length; t.steps.splice(at, 0, s);
+          st.focus.forEach(f => { if (f.line === l.id && f.step === s.id) f.line = t.id; });
+          msg = `quest: move ${s.id} "${s.title}" ${l.id} -> ${t.id}`;
+        }
         break;
       }
       case 'delete_step': {
