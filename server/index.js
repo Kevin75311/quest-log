@@ -9,6 +9,7 @@ const R = require('../public/js/reducer.js');
 const { Store } = require('./store.js');
 const { GitSync } = require('./git.js');
 const { readCalendar } = require('./calendar.js');
+const { syncCalendars } = require('./ical.js');
 
 const ROOT = path.resolve(__dirname, '..');
 loadEnvFile(process.env.ENV_FILE || path.join(ROOT, '.env'));
@@ -59,7 +60,7 @@ function calendar() {
   return cal.data;
 }
 
-const git = new GitSync({ ...CFG.git, repo: CFG.repo, dataDir: CFG.dataDir, extraFiles: ['tasks.md', 'job-lines.md'], log, onExternalChange: () => { try { store.load(); log('Reloaded quest data after pull'); } catch (e) { log('reload failed', e.message); } } });
+const git = new GitSync({ ...CFG.git, repo: CFG.repo, dataDir: CFG.dataDir, extraFiles: ['tasks.md', 'job-lines.md', 'calendar.md'], log, onExternalChange: () => { try { store.load(); log('Reloaded quest data after pull'); } catch (e) { log('reload failed', e.message); } } });
 git.start();
 // Regenerate tasks.md / job-lines.md once at startup so they match the current data.
 setTimeout(() => { try { store.save(store.state, ctx().today); git.queue('docs: regenerate tasks.md and job-lines.md from Quest Log'); } catch (e) { log('regenerate failed', e.message); } }, 3000);
@@ -68,6 +69,17 @@ function autoClose() {
   catch (e) { log('auto_close failed', e.message); }
 }
 setTimeout(autoClose, 5000); setInterval(autoClose, 3600 * 1000);
+// Google Calendar: private iCal feed URLs live outside the repo (one per line); calendar.md is rebuilt from them.
+const ICAL_FILE = process.env.ICAL_URLS_FILE || path.join(process.env.HOME || '/home/kevin', '.config/quest-log/ical-urls');
+const CAL_SYNC_MS = +(process.env.CAL_SYNC_MS || 15 * 60 * 1000);
+async function calSync() {
+  if (!fs.existsSync(ICAL_FILE)) return;
+  try {
+    const r = await syncCalendars({ urlsFile: ICAL_FILE, outFile: path.join(CFG.repo, CFG.calendarFile), tz: CFG.tz });
+    if (r.changed) { git.queue('calendar: sync from Google Calendar'); log(`calendar.md updated (${r.count} events)`); }
+  } catch (e) { log('calendar sync failed:', e.message); }
+}
+setTimeout(calSync, 8000); setInterval(calSync, CAL_SYNC_MS);
 
 // ---------- http ----------
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };
