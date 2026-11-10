@@ -264,9 +264,10 @@
     const all = allUrgent();
     const soon = all.filter(x => x.u.level === 'crit' || x.u.level === 'warn').sort((a, b) => a.u.days - b.u.days);
     const late = all.filter(x => x.u.level === 'late').sort((a, b) => b.u.days - a.u.days);
-        const soonShown = U.soonAll ? soon : soon.slice(0, 4);
+    const cap = U.soonAll ? soon.length : Math.min(U.soonCap || 4, 4);
+    const soonShown = soon.slice(0, cap);
     $('#urg').innerHTML = (soon.length ? soonShown.map(({ l, s, u }) => `<button class="u" data-goto="${l.id}|${s.id}"><div class="cd ${u.level}">${u.days}<small>${u.days === 1 ? 'DAY' : 'DAYS'}</small></div><div class="ut"><span class="tl">${esc(s.title)}</span><small>${short(l.id)} · ${esc(l.short)} · ${u.kind === 'due' ? 'DUE' : 'PLANNED'} ${md(u.date)}</small></div></button>`).join('')
-        + (soon.length > 4 ? `<button class="more" data-soonall>${U.soonAll ? '▾ LESS' : `▸ ${soon.length - 4} MORE`}</button>` : '')
+        + (soon.length > cap || U.soonAll ? `<button class="more" data-soonall>${U.soonAll ? '▾ LESS' : `▸ ${soon.length - cap} MORE`}</button>` : '')
       : '<div class="calnote" style="padding:6px 0">Nothing due in the next 7 days.</div>')
       + (late.length ? `<button class="late-h" data-lateall><span class="qi">?</span>${late.length} NEED A CHECK-IN<span class="sp"></span>${U.lateAll ? '▾' : '▸'}</button>`
         + (U.lateAll ? late.map(({ l, s, u }) => `<button class="late-i" data-goto="${l.id}|${s.id}"><i>?</i><span>${esc(s.title)}</span><small>${md(u.date)}</small></button>`).join('') : '') : '');
@@ -283,12 +284,25 @@
     if (F.length < R.FOCUS_MAX) h += `<button class="pick" data-act="pick">+ PICK A QUEST</button>`;
     $('#today').innerHTML = h;
     renderBosses();
+    fitRail();
+  }
+  // Keep the right column on one screen: show fewer urgent items (the rest go behind "MORE") until it fits.
+  function fitRail() {
+    const rail = $('.rail'); if (!rail || U.fitting) return;
+    rail.classList.remove('tight');
+    if (U.soonAll || matchMedia('(max-width:820px)').matches) return;
+    const over = () => rail.scrollHeight - rail.clientHeight > 1;
+    U.fitting = true;
+    try {
+      while (over() && (U.soonCap || 4) > 1) { U.soonCap = (U.soonCap || 4) - 1; renderRail(); }
+      if (over()) rail.classList.add('tight'); // short screens: compact spacing as a last step
+    } finally { U.fitting = false; }
   }
   function renderBosses() {
     const B = bosses(), el = $('#bosses');
     if (!B.length) { el.innerHTML = `<div class="boss b0"><div class="top"><div><small>NO BOSS SCHEDULED</small><div class="bn">ADD A BOSS DATE TO A LINE</div></div></div></div>`; return; }
     U.bossI = U.bossI % B.length;
-    const order = [...B.slice(U.bossI), ...B.slice(0, U.bossI)].slice(0, 3);
+    const order = [...B.slice(U.bossI), ...B.slice(0, U.bossI)].slice(0, 1);
     el.innerHTML = order.map((b, k) => {
       const total = b.l.steps.length, left = b.l.steps.filter(s => s.status !== 'done').length;
       return `<div class="boss b${k}" style="z-index:${3 - k}"><div class="top"><svg width="38" height="38" viewBox="0 0 44 44"><path d="M22 4C11 4 5 11 5 20c0 6 3 9 6 11v6h22v-6c3-2 6-5 6-11 0-9-6-16-17-16z" fill="#fffaf0"/><circle cx="15" cy="21" r="5" fill="#16130f"/><circle cx="29" cy="21" r="5" fill="#16130f"/><path d="M18 37v-5M22 37v-5M26 37v-5" stroke="#16130f" stroke-width="2.5"/></svg>
@@ -300,7 +314,7 @@
   function nextBoss() {
     const B = bosses(); if (B.length < 2) { const t = $('.boss.b0'); t && t.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-3deg)' }, { transform: 'rotate(3deg)' }, { transform: 'rotate(0)' }], 350); return; }
     const top = $('.boss.b0'); top.classList.add('out');
-    setTimeout(() => { U.bossI = (U.bossI + 1) % B.length; renderBosses(); const n = $('.boss.b0'); n.animate([{ transform: 'translate(10px,10px) rotate(2.5deg)' }, { transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.3,1.4,.5,1)' }); }, 230);
+    setTimeout(() => { U.bossI = (U.bossI + 1) % B.length; renderBosses(); const n = $('.boss.b0'); n.animate([{ transform: 'translateY(10px) scale(.97)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 300, easing: 'cubic-bezier(.3,1.4,.5,1)' }); }, 230);
   }
 
   /* ---------- completion + XP flow ---------- */
@@ -587,7 +601,7 @@
     if (d.edit) return editStep(d.edit);
     if (d.showdone) { U.showDone[d.showdone] = !U.showDone[d.showdone]; return renderMap($('#view')); }
     if (d.lateall != null) { U.lateAll = !U.lateAll; return renderRail(); }
-    if (d.soonall != null) { U.soonAll = !U.soonAll; return renderRail(); }
+    if (d.soonall != null) { U.soonAll = !U.soonAll; U.soonCap = 4; return renderRail(); }
     if (d.act === 'pick') return openPicker();
     if (d.act === 'newline') return openNew('line');
     if (d.act === 'addstep') return openNew('step', { line: d.line });
@@ -625,7 +639,7 @@
   document.addEventListener('submit', async e => {
     if (e.target.matches('[data-capture]')) { e.preventDefault(); const v = $('#capin').value.trim(); if (!v) return; if (await act({ type: 'inbox_add', t: v })) { render(); const n = $('#capin'); n && n.focus(); toast('CAPTURED', 'Sort it into a line when ready'); } }
   });
-  window.addEventListener('resize', () => { if (U.view === 'map') drawTrunks(); });
+  window.addEventListener('resize', () => { if (U.view === 'map') drawTrunks(); clearTimeout(U.rsz); U.rsz = setTimeout(() => { U.soonCap = 4; renderRail(); }, 150); });
 
   /* ================= boot ================= */
   async function refresh() {
