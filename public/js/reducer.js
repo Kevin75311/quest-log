@@ -27,6 +27,20 @@
     const n = dayDiff(today, d.date);
     return { days: n, kind: d.kind, date: d.date, level: n < 0 ? 'late' : n <= 3 ? 'crit' : n <= 7 ? 'warn' : 'ok' };
   }
+  // A sub-line has parent = id of a top-level line. Order: each top-level line followed by its sub-lines.
+  function ordered(lines) {
+    const tops = lines.filter(l => !l.parent || !lines.some(p => p.id === l.parent));
+    const out = []; tops.forEach(t => { out.push(t); lines.forEach(c => { if (c.parent === t.id) out.push(c); }); });
+    return out;
+  }
+  function setParent(st, l, pid) {
+    pid = clean(pid, 12).toUpperCase();
+    if (!pid) { delete l.parent; return; }
+    if (pid === l.id) throw new Error('A line cannot be its own parent');
+    const p = findLine(st, pid); if (p.parent) throw new Error('Sub-lines can only go one level deep');
+    if (st.lines.some(x => x.parent === l.id)) throw new Error(l.id + ' has sub-lines, so it cannot become a sub-line');
+    l.parent = p.id;
+  }
   function frontier(line) { const i = line.steps.findIndex(s => s.status !== 'done'); return i < 0 ? line.steps.length : i; }
   function findLine(st, id) { const l = st.lines.find(x => x.id === id); if (!l) throw new Error('Unknown mission line ' + id); return l; }
   function findStep(l, id) { const s = l.steps.find(x => x.id === id); if (!s) throw new Error('Unknown step ' + id); return s; }
@@ -146,13 +160,15 @@
         if (st.lines.some(x => x.id === id)) throw new Error('Line id already exists');
         const line = { id, short, name, prio: okPrio(a.prio), blurb: clean(a.blurb, 300), boss: null, steps: [] };
         if (clean(a.bossName) && okDate(a.bossDate)) line.boss = { name: clean(a.bossName, 60), date: a.bossDate, note: clean(a.bossNote, 120) };
-        st.lines.push(line); msg = `quest: new line ${id} "${name}"`;
+        if (a.parent) setParent(st, line, a.parent);
+        st.lines.push(line); msg = `quest: new line ${id} "${name}"${line.parent ? ' under ' + line.parent : ''}`;
         break;
       }
       case 'edit_line': {
         const l = findLine(st, a.line);
         if (clean(a.name)) l.name = clean(a.name, 80); if (clean(a.short)) l.short = clean(a.short, 8).toUpperCase();
         if (a.prio) l.prio = okPrio(a.prio); if ('blurb' in a) l.blurb = clean(a.blurb, 300);
+        if ('parent' in a) setParent(st, l, a.parent);
         if ('bossName' in a) l.boss = clean(a.bossName) && okDate(a.bossDate) ? { name: clean(a.bossName, 60), date: a.bossDate, note: clean(a.bossNote, 120) } : null;
         if (typeof a.move === 'number') { const i = st.lines.indexOf(l), j = Math.max(0, Math.min(st.lines.length - 1, i + a.move)); st.lines.splice(i, 1); st.lines.splice(j, 0, l); }
         msg = `quest: edit line ${l.id}`;
@@ -187,5 +203,5 @@
     return { state: st, msg, xp };
   }
 
-  return { apply, XP, SUB_XP, LEVEL_XP, FOCUS_MAX, level, urgency, deadlineOf, frontier, dayDiff };
+  return { apply, ordered, XP, SUB_XP, LEVEL_XP, FOCUS_MAX, level, urgency, deadlineOf, frontier, dayDiff };
 });

@@ -59,9 +59,9 @@ function renderMarkdown(st, today) {
   if (!urgent.length) L.push('_None._');
   urgent.forEach(({ l, s, u }) => L.push(`- ${u.level === 'late' ? `CHECK-IN (${u.kind} date ${u.date} passed)` : `${u.days} day(s) — ${u.kind} ${u.date}`}: ${s.id} ${s.title} (${l.id})`));
   L.push('');
-  st.lines.forEach(l => {
+  R.ordered(st.lines).forEach(l => {
     const done = l.steps.filter(s => s.status === 'done').length;
-    L.push(`## ${l.id} · ${l.name} (${l.short}) — ${done}/${l.steps.length}, priority ${l.prio}`, '');
+    L.push(`${l.parent ? '###' : '##'} ${l.id} · ${l.name} (${l.short}) — ${done}/${l.steps.length}, priority ${l.prio}${l.parent ? ` — sub-line of ${l.parent}` : ''}`, '');
     if (l.blurb) L.push(l.blurb, '');
     if (l.boss) L.push(`Boss: **${l.boss.name}** — ${l.boss.date}${l.boss.note ? ` (${l.boss.note})` : ''}`, '');
     L.push('| # | ID | Step | Status | Priority | Planned | Due | Subtasks | Latest comment |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- |');

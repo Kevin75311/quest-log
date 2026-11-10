@@ -67,7 +67,7 @@
   }
 
   /* ================= derived ================= */
-  const lines = () => S.state.lines;
+  const lines = () => R.ordered(S.state.lines);
   const L = id => lines().find(l => l.id === id);
   const ST = (lid, sid) => { const l = L(lid); return l && l.steps.find(s => s.id === sid); };
   const urg = s => R.urgency(s, S.today);
@@ -150,7 +150,7 @@
       pill = `<button class="cur ${lv}" data-goto="${l.id}|${cur.id}" title="${esc(cur.title)}${u ? ' — ' + urgText(u, true) : ''}">${tag}<span class="tx">${esc(cur.title)}</span></button>`;
     } else pill = `<span class="cur">ALL STEPS CLEARED ✓</span>`;
     const boss = l.boss && R.dayDiff(S.today, l.boss.date) >= 0 ? `<span class="bt">${esc(l.boss.name)} <b>${R.dayDiff(S.today, l.boss.date)}D</b></span>` : '';
-    return `<div class="row ${l.prio === 'low' ? 'low' : ''} ${open ? 'open' : ''}" data-line="${l.id}">
+    return `<div class="row ${l.prio === 'low' ? 'low' : ''} ${open ? 'open' : ''} ${l.parent ? 'subl' : ''}" data-line="${l.id}" ${l.parent ? `data-parent="${l.parent}"` : ''}>
       <div class="rhead"><button class="chip" data-toggle="${l.id}" title="${esc(l.name)}"><span class="id">${short(l.id)}</span><span class="nm">${esc(l.short)}</span><span class="ct">${done}/${l.steps.length}</span>
         <svg class="car" viewBox="0 0 16 16"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="mini">${mini}</div>${pill}${boss}</div>
@@ -217,7 +217,8 @@
   function drawTrunks() {
     const net = $('#net'), svg = $('#trunks'); if (!net || !svg || getComputedStyle(svg).display === 'none') return;
     const nr = net.getBoundingClientRect();
-    const rows = $$('.row', net).map(r => { const c = $('.chip', r).getBoundingClientRect(); return { y: c.top - nr.top + c.height / 2, x: c.left - nr.left, low: r.classList.contains('low'), open: r.classList.contains('open') }; });
+    const all = $$('.row', net).map(r => { const c = $('.chip', r).getBoundingClientRect(); return { id: r.dataset.line, parent: r.dataset.parent, y: c.top - nr.top + c.height / 2, x: c.left - nr.left, top: c.top - nr.top, bot: c.bottom - nr.top, low: r.classList.contains('low'), open: r.classList.contains('open') }; });
+    const rows = all.filter(r => !r.parent), subs = all.filter(r => r.parent);
     if (!rows.length) return;
     const hubY = (rows[0].y + rows[rows.length - 1].y) / 2; $('#hub').style.top = hubY + 'px';
     const above = rows.filter(r => r.y < hubY - 1), below = rows.filter(r => r.y > hubY + 1);
@@ -230,6 +231,11 @@
       const col = r.open ? 'var(--acc)' : r.low ? 'var(--grey)' : 'var(--ink)';
       const d = sx == null ? `M74 ${r.y} L${r.x} ${r.y}` : `M74 ${hubY + o} L${sx} ${hubY + o} L${sx} ${r.y} L${r.x} ${r.y}`;
       p += `<path d="${d}" fill="none" stroke="${col}" stroke-width="${r.open ? 6 : r.low ? 3 : 4.5}" stroke-linejoin="round" ${r.open ? 'style="paint-order:stroke"' : ''}/>`;
+    });
+    subs.forEach(r => { // sub-line: elbow from its parent chip
+      const par = rows.find(x => x.id === r.parent); if (!par) return;
+      const px = par.x + 22, col = r.open ? 'var(--acc)' : r.low ? 'var(--grey)' : 'var(--ink)';
+      p += `<path d="M${px} ${par.bot} L${px} ${r.y} L${r.x} ${r.y}" fill="none" stroke="${col}" stroke-width="${r.open ? 5 : 3.5}" stroke-linejoin="round"/>`;
     });
     svg.innerHTML = p;
   }
@@ -492,7 +498,7 @@
   function lineForm(l) {
     const b = l.boss || {};
     return `<div class="two"><div class="fld"><label>Name</label><input id="f-name" value="${esc(l.name || '')}" placeholder="e.g. MRI Insertion Unit" autofocus></div><div class="fld"><label>Short code</label><input id="f-short" maxlength="8" value="${esc(l.short || '')}" placeholder="e.g. INSERT"></div></div>
-      <div class="two"><div class="fld"><label>Priority</label><select id="f-prio">${['high', 'normal', 'low'].map(p => `<option ${p === (l.prio || 'normal') ? 'selected' : ''}>${p}</option>`).join('')}</select></div><div class="fld"><label>Blurb</label><input id="f-blurb" value="${esc(l.blurb || '')}"></div></div>
+      <div class="three"><div class="fld"><label>Priority</label><select id="f-prio">${['high', 'normal', 'low'].map(p => `<option ${p === (l.prio || 'normal') ? 'selected' : ''}>${p}</option>`).join('')}</select></div><div class="fld"><label>Parent line</label><select id="f-parent"><option value="">— none (top level) —</option>${S.state.lines.filter(x => !x.parent && x.id !== l.id).map(x => `<option value="${x.id}" ${x.id === l.parent ? 'selected' : ''}>${short(x.id)} · ${esc(x.short)}</option>`).join('')}</select></div><div class="fld"><label>Blurb</label><input id="f-blurb" value="${esc(l.blurb || '')}"></div></div>
       <div class="three"><div class="fld"><label>Boss (deadline) name</label><input id="f-bname" value="${esc(b.name || '')}" placeholder="e.g. ICRA paper"></div><div class="fld"><label>Boss date</label><input type="date" id="f-bdate" value="${b.date || ''}"></div><div class="fld"><label>Boss note</label><input id="f-bnote" value="${esc(b.note || '')}"></div></div>`;
   }
   const val = id => { const e = document.getElementById(id); return e ? (e.type === 'checkbox' ? e.checked : e.value) : undefined; };
@@ -501,7 +507,7 @@
     if (kind === 'step') a = { type: 'add_step', line: val('f-line'), title: val('f-title'), priority: val('f-prio'), planned: val('f-planned'), due: val('f-due'), position: val('f-pos'), note: val('f-note'), today: val('f-today') };
     else if (kind === 'sub') a = { type: 'add_sub', line: val('f-line'), step: val('f-step'), t: val('f-title') };
     else if (kind === 'event') a = { type: 'add_event', title: val('f-title'), date: val('f-date'), start: val('f-allday') ? '' : val('f-start'), end: val('f-allday') ? '' : val('f-end'), allDay: val('f-allday'), line: val('f-line') };
-    else if (kind === 'line') a = { type: 'add_line', name: val('f-name'), short: val('f-short'), prio: val('f-prio'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') };
+    else if (kind === 'line') a = { type: 'add_line', name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') };
     else a = { type: 'inbox_add', t: val('f-title') };
     const r = await act(a, true);
     if (!r) { $('#f-err').textContent = 'Could not save — check the fields (title is required).'; $('#modal').animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], 200); return; }
@@ -532,7 +538,7 @@
       <div style="display:flex;gap:8px"><button class="btn sm" data-lmove="-1">↑ MOVE UP</button><button class="btn sm" data-lmove="1">↓ MOVE DOWN</button></div></div>
       <div class="mf"><span class="hint">Clear the boss name to remove the boss.</span><button class="btn ghost" data-close>CANCEL</button><button class="btn acc" id="l-save">SAVE</button></div>`,
       m => {
-        $('#l-save', m).onclick = async () => { const r = await act({ type: 'edit_line', line: lid, name: val('f-name'), short: val('f-short'), prio: val('f-prio'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') }); if (r) { closeModal(); render(); toast('LINE UPDATED', esc(val('f-name'))); } };
+        $('#l-save', m).onclick = async () => { const r = await act({ type: 'edit_line', line: lid, name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') }); if (r) { closeModal(); render(); toast('LINE UPDATED', esc(val('f-name'))); } };
         $$('[data-lmove]', m).forEach(b => b.onclick = async () => { const r = await act({ type: 'edit_line', line: lid, move: +b.dataset.lmove }); if (r) render(); });
       });
   }
