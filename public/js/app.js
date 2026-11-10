@@ -499,7 +499,8 @@
     const b = l.boss || {};
     return `<div class="two"><div class="fld"><label>Name</label><input id="f-name" value="${esc(l.name || '')}" placeholder="e.g. MRI Insertion Unit" autofocus></div><div class="fld"><label>Short code</label><input id="f-short" maxlength="8" value="${esc(l.short || '')}" placeholder="e.g. INSERT"></div></div>
       <div class="three"><div class="fld"><label>Priority</label><select id="f-prio">${['high', 'normal', 'low'].map(p => `<option ${p === (l.prio || 'normal') ? 'selected' : ''}>${p}</option>`).join('')}</select></div><div class="fld"><label>Parent line</label><select id="f-parent"><option value="">— none (top level) —</option>${S.state.lines.filter(x => !x.parent && x.id !== l.id).map(x => `<option value="${x.id}" ${x.id === l.parent ? 'selected' : ''}>${short(x.id)} · ${esc(x.short)}</option>`).join('')}</select></div><div class="fld"><label>Blurb</label><input id="f-blurb" value="${esc(l.blurb || '')}"></div></div>
-      <div class="three"><div class="fld"><label>Boss (deadline) name</label><input id="f-bname" value="${esc(b.name || '')}" placeholder="e.g. ICRA paper"></div><div class="fld"><label>Boss date</label><input type="date" id="f-bdate" value="${b.date || ''}"></div><div class="fld"><label>Boss note</label><input id="f-bnote" value="${esc(b.note || '')}"></div></div>`;
+      <div class="three"><div class="fld"><label>Boss (deadline) name</label><input id="f-bname" value="${esc(b.name || '')}" placeholder="e.g. ICRA paper"></div><div class="fld"><label>Boss date</label><input type="date" id="f-bdate" value="${b.date || ''}"></div><div class="fld"><label>Boss note</label><input id="f-bnote" value="${esc(b.note || '')}"></div></div>
+      <label class="chk"><input type="checkbox" id="f-auto" ${l.autoDone ? 'checked' : ''}> Reminder line: close steps automatically after their hard deadline</label>`;
   }
   const val = id => { const e = document.getElementById(id); return e ? (e.type === 'checkbox' ? e.checked : e.value) : undefined; };
   async function saveNew(kind) {
@@ -507,7 +508,7 @@
     if (kind === 'step') a = { type: 'add_step', line: val('f-line'), title: val('f-title'), priority: val('f-prio'), planned: val('f-planned'), due: val('f-due'), position: val('f-pos'), note: val('f-note'), today: val('f-today') };
     else if (kind === 'sub') a = { type: 'add_sub', line: val('f-line'), step: val('f-step'), t: val('f-title') };
     else if (kind === 'event') a = { type: 'add_event', title: val('f-title'), date: val('f-date'), start: val('f-allday') ? '' : val('f-start'), end: val('f-allday') ? '' : val('f-end'), allDay: val('f-allday'), line: val('f-line') };
-    else if (kind === 'line') a = { type: 'add_line', name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') };
+    else if (kind === 'line') a = { type: 'add_line', name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), autoDone: val('f-auto'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') };
     else a = { type: 'inbox_add', t: val('f-title') };
     const r = await act(a, true);
     if (!r) { $('#f-err').textContent = 'Could not save — check the fields (title is required).'; $('#modal').animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], 200); return; }
@@ -538,7 +539,7 @@
       <div style="display:flex;gap:8px"><button class="btn sm" data-lmove="-1">↑ MOVE UP</button><button class="btn sm" data-lmove="1">↓ MOVE DOWN</button></div></div>
       <div class="mf"><span class="hint">Clear the boss name to remove the boss.</span><button class="btn ghost" data-close>CANCEL</button><button class="btn acc" id="l-save">SAVE</button></div>`,
       m => {
-        $('#l-save', m).onclick = async () => { const r = await act({ type: 'edit_line', line: lid, name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') }); if (r) { closeModal(); render(); toast('LINE UPDATED', esc(val('f-name'))); } };
+        $('#l-save', m).onclick = async () => { const r = await act({ type: 'edit_line', line: lid, name: val('f-name'), short: val('f-short'), prio: val('f-prio'), parent: val('f-parent'), autoDone: val('f-auto'), blurb: val('f-blurb'), bossName: val('f-bname'), bossDate: val('f-bdate'), bossNote: val('f-bnote') }); if (r) { closeModal(); render(); toast('LINE UPDATED', esc(val('f-name'))); } };
         $$('[data-lmove]', m).forEach(b => b.onclick = async () => { const r = await act({ type: 'edit_line', line: lid, move: +b.dataset.lmove }); if (r) render(); });
       });
   }

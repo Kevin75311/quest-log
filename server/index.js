@@ -61,6 +61,11 @@ function calendar() {
 
 const git = new GitSync({ ...CFG.git, repo: CFG.repo, dataDir: CFG.dataDir, log, onExternalChange: () => { try { store.load(); log('Reloaded quest data after pull'); } catch (e) { log('reload failed', e.message); } } });
 git.start();
+function autoClose() {
+  try { const r = R.apply(store.state, { type: 'auto_close' }, ctx()); if (r.msg) { store.save(r.state, ctx().today); git.queue(r.msg); log(r.msg); } }
+  catch (e) { log('auto_close failed', e.message); }
+}
+setTimeout(autoClose, 5000); setInterval(autoClose, 3600 * 1000);
 
 // ---------- http ----------
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };

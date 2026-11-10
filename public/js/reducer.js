@@ -167,6 +167,7 @@
         const line = { id, short, name, prio: okPrio(a.prio), blurb: clean(a.blurb, 300), boss: null, steps: [] };
         if (clean(a.bossName) && okDate(a.bossDate)) line.boss = { name: clean(a.bossName, 60), date: a.bossDate, note: clean(a.bossNote, 120) };
         if (a.parent) setParent(st, line, a.parent);
+        if (a.autoDone) line.autoDone = true;
         st.lines.push(line); msg = `quest: new line ${id} "${name}"${line.parent ? ' under ' + line.parent : ''}`;
         break;
       }
@@ -175,6 +176,7 @@
         if (clean(a.name)) l.name = clean(a.name, 80); if (clean(a.short)) l.short = clean(a.short, 8).toUpperCase();
         if (a.prio) l.prio = okPrio(a.prio); if ('blurb' in a) l.blurb = clean(a.blurb, 300);
         if ('parent' in a) setParent(st, l, a.parent);
+        if ('autoDone' in a) { if (a.autoDone) l.autoDone = true; else delete l.autoDone; }
         if ('bossName' in a) l.boss = clean(a.bossName) && okDate(a.bossDate) ? { name: clean(a.bossName, 60), date: a.bossDate, note: clean(a.bossNote, 120) } : null;
         if (typeof a.move === 'number') { const i = st.lines.indexOf(l), j = Math.max(0, Math.min(st.lines.length - 1, i + a.move)); st.lines.splice(i, 1); st.lines.splice(j, 0, l); }
         msg = `quest: edit line ${l.id}`;
@@ -186,6 +188,15 @@
         if (!e.allDay) { e.start = okTime(a.start); e.end = okTime(a.end) || e.start; }
         if (a.line) e.line = a.line;
         st.events.push(e); msg = `calendar: add "${title}" ${date}${e.start ? ' ' + e.start : ''}`;
+        break;
+      }
+      case 'auto_close': { // lines marked autoDone: steps close by themselves once their hard deadline has passed (reminder-only lines)
+        const closed = [];
+        st.lines.forEach(l => { if (!l.autoDone) return; l.steps.forEach(s => {
+          if (s.status !== 'done' && s.due && dayDiff(s.due, ctx.today) > 0) { s.status = 'done'; s.doneAt = ctx.now; s.auto = true; closed.push(s.id); }
+        }); });
+        st.focus = st.focus.filter(f => !closed.includes(f.step));
+        if (closed.length) msg = `quest: auto-close ${closed.join(', ')} (deadline passed)`;
         break;
       }
       case 'delete_event': { st.events = st.events.filter(e => e.id !== a.id); msg = 'calendar: delete event'; break; }
