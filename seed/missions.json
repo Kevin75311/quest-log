@@ -1,0 +1,607 @@
+{
+  "version": 1,
+  "lines": [
+    {
+      "id": "JL-04",
+      "short": "GRD",
+      "name": "GRD Paper",
+      "prio": "high",
+      "blurb": "Fabric-reinforced geometric corrugated rolling diaphragm: build, test, model, publish (AIM 2027).",
+      "boss": {
+        "name": "AIM 2027 paper",
+        "date": "2027-01-26",
+        "note": "Tentative per CFP; IEEE RAS lists Mar 2"
+      },
+      "steps": [
+        {
+          "id": "C-JL04-01",
+          "title": "Build GRD actuator hardware",
+          "status": "done",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "note": "Actuator hardware done per user (job-lines 2026-10-23)."
+        },
+        {
+          "id": "T-20261006-05",
+          "title": "Mold fabric-reinforced diaphragms for two opposed-pair sets",
+          "status": "doing",
+          "priority": "high",
+          "subs": [
+            {
+              "id": "s-seed0m7nt",
+              "t": "Cast set 1 · diaphragm A",
+              "done": false
+            },
+            {
+              "id": "s-seed3htp3",
+              "t": "Cast set 1 · diaphragm B",
+              "done": false
+            },
+            {
+              "id": "s-seed7nlwa",
+              "t": "Cast set 2 · diaphragm A",
+              "done": false
+            },
+            {
+              "id": "s-seedzmjco",
+              "t": "Cast set 2 · diaphragm B",
+              "done": false
+            },
+            {
+              "id": "s-seed2px53",
+              "t": "Cast coupon strips",
+              "done": false
+            },
+            {
+              "id": "s-seede3qka",
+              "t": "Record failures + as-built geometry",
+              "done": false
+            }
+          ],
+          "comments": [],
+          "planned": "2026-11-06"
+        },
+        {
+          "id": "T-20261008-02",
+          "title": "Carefully read GRD documents 06 and 07",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-13",
+          "title": "Mount molded diaphragms and assemble for testing",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "C-JL04-02",
+          "title": "S0 coupons + pressure/pleating checks on set 1",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-11-16"
+        },
+        {
+          "id": "T-20261023-02",
+          "title": "Develop and validate 2D mechanics model",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-14",
+          "title": "S1/S2 experiments: fit set 1, predict set 2",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-12-07"
+        },
+        {
+          "id": "C-JL04-03",
+          "title": "Transmission T2–T4 characterization",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-12-20"
+        },
+        {
+          "id": "T-20261006-01",
+          "title": "Revise GRD manuscript with measured evidence",
+          "status": "doing",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-12-31"
+        }
+      ]
+    },
+    {
+      "id": "JL-05",
+      "short": "ARM",
+      "name": "Dual-Arm Manipulation",
+      "prio": "high",
+      "blurb": "ORCA-derived dual two-finger hands → task, contribution, matched sim + hardware study (IROS 2027).",
+      "boss": {
+        "name": "IROS 2027 paper",
+        "date": "2027-03-01",
+        "note": "IEEE RAS calendar; confirm CFP"
+      },
+      "steps": [
+        {
+          "id": "C-JL05-01",
+          "title": "Configure 5-finger, 2-finger and Fin Ray simulation",
+          "status": "done",
+          "priority": "normal",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true
+        },
+        {
+          "id": "C-JL05-02",
+          "title": "Dual two-finger hand CAD",
+          "status": "done",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true
+        },
+        {
+          "id": "T-20261006-07",
+          "title": "Manufacture + assemble dual two-finger hands",
+          "status": "todo",
+          "priority": "high",
+          "subs": [
+            {
+              "id": "s-seedof09n",
+              "t": "Inspect tendon routing",
+              "done": false
+            },
+            {
+              "id": "s-seedorxa8",
+              "t": "Check pad geometry",
+              "done": false
+            },
+            {
+              "id": "s-seedexiks",
+              "t": "Check servo limits",
+              "done": false
+            },
+            {
+              "id": "s-seedmw7xv",
+              "t": "Inspect sensing",
+              "done": false
+            }
+          ],
+          "comments": [],
+          "planned": "2026-11-01"
+        },
+        {
+          "id": "T-20261008-04",
+          "title": "Carefully read ORCA force-control proposal",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "C-JL05-03",
+          "title": "Bench-calibrate grip; repeatable hardware grasp",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-11-16"
+        },
+        {
+          "id": "T-20261023-03",
+          "title": "Choose task, contribution and comparison outcomes",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-12-07"
+        },
+        {
+          "id": "C-JL05-04",
+          "title": "Matched sim comparisons + hardware trials",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2027-01-17"
+        },
+        {
+          "id": "C-JL05-05",
+          "title": "Full draft + coauthor review",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2027-02-15"
+        }
+      ]
+    },
+    {
+      "id": "JL-08",
+      "short": "HBPA",
+      "name": "HBPA Actuator",
+      "prio": "high",
+      "blurb": "Smaller HBPA: CAD → pistons arrive → print/fit → bellows → mount on the MRI robot.",
+      "boss": {
+        "name": "Mount HBPA on MRI robot",
+        "date": "2026-11-25",
+        "note": "Proposed checkpoint"
+      },
+      "steps": [
+        {
+          "id": "T-20261006-12",
+          "title": "Order 24 mm bore piston set",
+          "status": "done",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-21",
+          "title": "Finish smaller HBPA actuator CAD",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-11-09"
+        },
+        {
+          "id": "C-JL08-01",
+          "title": "Receive pistons (expected ~Nov 10)",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-11-10"
+        },
+        {
+          "id": "C-JL08-02",
+          "title": "Print + fit parts",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-11-17"
+        },
+        {
+          "id": "C-JL08-03",
+          "title": "Mold bellows",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "planned": "2026-11-24"
+        },
+        {
+          "id": "T-20261006-22",
+          "title": "Collect position + force data",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261023-05",
+          "title": "Mount on MRI robot and validate integration",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "JL-03",
+      "short": "NYCU",
+      "name": "NYCU Cooperation",
+      "prio": "normal",
+      "blurb": "Read the tendon model + code, then specify experiments and data format for fitting.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261008-06",
+          "title": "Carefully read NYCU tendon model and code",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-06",
+          "title": "Design data-generation experiments for fitting",
+          "status": "doing",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "JL-02",
+      "short": "GNSS",
+      "name": "Tensor Tech",
+      "prio": "normal",
+      "blurb": "Internship (started Oct 14): learn GNSS, review code, define deliverables.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261016-02",
+          "title": "Complete initial Tensor Tech deliverable",
+          "status": "done",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261008-01",
+          "title": "Learn GNSS and review code",
+          "status": "doing",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "C-JL02-01",
+          "title": "Define next deliverable + paper question",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "JL-06",
+      "short": "LIGHT",
+      "name": "Finger Light",
+      "prio": "normal",
+      "blurb": "Pi + LED + MIDI path, assembly and an end-to-end demo.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261016-03",
+          "title": "Order remaining Finger Light hardware",
+          "status": "done",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-15",
+          "title": "Bring up Pi / LED / MIDI hardware",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": [],
+          "planned": "2026-10-25"
+        },
+        {
+          "id": "T-20261006-16",
+          "title": "Complete Finger Light assembly and CAD",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-17",
+          "title": "End-to-end test + code fixes",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "JL-01",
+      "short": "236A",
+      "name": "ECE236A",
+      "prio": "low",
+      "blurb": "Course work — low normally, medium around exams.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261008-03",
+          "title": "Catch up ECE236A weeks 1 and 2",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261023-01",
+          "title": "Prepare for ECE236A Midterm 1",
+          "status": "doing",
+          "priority": "normal",
+          "subs": [],
+          "comments": [],
+          "due": "2026-10-28"
+        },
+        {
+          "id": "C-JL01-01",
+          "title": "EE236A HW 4",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "due": "2026-11-11",
+          "note": "From Google Calendar export"
+        }
+      ]
+    },
+    {
+      "id": "JL-07",
+      "short": "READ",
+      "name": "MAE 171A Reader",
+      "prio": "low",
+      "blurb": "Grade according to the course calendar.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261011-02",
+          "title": "Grade MA171A HW1",
+          "status": "done",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261016-01",
+          "title": "Grade MA171A HW2",
+          "status": "done",
+          "priority": "normal",
+          "subs": [],
+          "comments": [],
+          "due": "2026-10-16"
+        },
+        {
+          "id": "T-20261023-04",
+          "title": "Grade MAE171A HW3",
+          "status": "todo",
+          "priority": "low",
+          "subs": [],
+          "comments": [],
+          "due": "2026-10-23"
+        },
+        {
+          "id": "C-JL07-01",
+          "title": "Grade MA171A HW5",
+          "status": "todo",
+          "priority": "low",
+          "subs": [],
+          "comments": [],
+          "checkpoint": true,
+          "due": "2026-11-13",
+          "note": "From Google Calendar export"
+        }
+      ]
+    },
+    {
+      "id": "JL-09",
+      "short": "MRI",
+      "name": "MRI Robot Upkeep",
+      "prio": "low",
+      "blurb": "Asymmetric-design kinematics and essential maintenance.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261006-04",
+          "title": "Simulate kinematics for the asymmetric design",
+          "status": "doing",
+          "priority": "low",
+          "subs": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "SIDE",
+      "short": "SIDE",
+      "name": "Side Quests",
+      "prio": "low",
+      "blurb": "Goals that are not canceled, just not in the current focus.",
+      "boss": null,
+      "steps": [
+        {
+          "id": "T-20261006-10",
+          "title": "Summer 2027 robotics internship applications",
+          "status": "doing",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-03",
+          "title": "Revise NIH proposal",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-18",
+          "title": "Simulate new MRI insertion unit",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-19",
+          "title": "Complete insertion-unit CAD",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-20",
+          "title": "Manufacture insertion unit",
+          "status": "todo",
+          "priority": "high",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-11",
+          "title": "Money/investment plan + 2027 car budget",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-08",
+          "title": "Support Jimmy's drone project (CAD)",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261006-02",
+          "title": "Plan separate HBPA paper",
+          "status": "todo",
+          "priority": "low",
+          "subs": [],
+          "comments": []
+        },
+        {
+          "id": "T-20261008-05",
+          "title": "Understand hydraulic + tendon hybrid transmission modeling",
+          "status": "todo",
+          "priority": "normal",
+          "subs": [],
+          "comments": []
+        }
+      ]
+    }
+  ]
+}

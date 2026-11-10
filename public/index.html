@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16130f">
+<title>Quest Log</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffd23f'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Impact' font-size='36' fill='%2316130f'%3EQ%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="hud">
+  <button class="logo" data-go="map" title="Mission map">QUEST LOG<small>PERSONAL·OS</small></button>
+  <div class="me" id="me" title="Level and XP">
+    <div class="face" id="face"></div>
+    <div class="lvl">LV <span id="lv">01</span></div>
+    <div class="xpw"><div class="xp" id="xpbar"><i id="xpfill"></i></div><small><span id="xptxt">0 / 250 XP</span><span id="xpnext">NEXT · LV 2</span></small></div>
+  </div>
+  <div class="pill hide-s" title="Days in a row with at least one completion"><svg width="22" height="28" viewBox="0 0 22 28"><path d="M11 1C13 8 21 11 20 19a9 9 0 0 1-18 0c0-5 4-6 4-11 3 2 4 4 4 6 2-3 2-8 1-13z" fill="#ff6a1a" stroke="#fffaf0" stroke-width="2"/></svg><div><span id="streak">0</span><small>DAY STREAK</small></div></div>
+  <div class="pill hide-s" title="Total XP earned"><svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11" fill="#ffd23f" stroke="#fffaf0" stroke-width="2.5"/><text x="13" y="18" text-anchor="middle" font-family="Anton" font-size="12" fill="#16130f">XP</text></svg><div><span id="total">0</span><small>TOTAL</small></div></div>
+  <div class="sp"></div>
+  <div class="date hide-s" id="date"></div>
+  <button class="new" id="newBtn" title="New quest (N)">+ <span>NEW QUEST</span></button>
+</header>
+<nav class="subnav">
+  <div class="tabs" role="tablist">
+    <button class="tab" data-go="map">MISSION MAP</button>
+    <button class="tab" data-go="cal">CALENDAR</button>
+    <button class="tab" data-go="inbox">INBOX <b id="inboxN"></b></button>
+  </div>
+  <div class="sp"></div>
+  <button class="sync" id="sync" title="Git sync status"><i></i><span>…</span></button>
+</nav>
+<div class="wrap">
+  <main class="panel" id="view"></main>
+  <aside class="rail">
+    <section class="card" id="urgentCard"><div class="sticker a">URGENT!</div><div id="urg"></div></section>
+    <section class="card" id="todayCard"><div class="sticker">TODAY</div><div id="today"></div></section>
+    <section class="bosses" id="bosses" title="Click to see the next boss"></section>
+  </aside>
+</div>
+<div class="scrim" id="scrim"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div class="pop" id="pop"></div>
+<div class="toasts" id="toasts"></div>
+<div class="fx" id="fx"></div>
+<div class="lvup" id="lvup"></div>
+<script src="js/reducer.js"></script>
+<script src="js/giraffe.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

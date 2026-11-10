@@ -1,0 +1,24 @@
+// Quick sanity checks: node scripts/self-test.js
+'use strict';
+const assert = require('assert'), fs = require('fs'), path = require('path');
+const R = require('../public/js/reducer.js');
+const seed = n => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', n + '.json'), 'utf8'));
+let st = { lines: seed('missions').lines, player: seed('player').player, focus: seed('player').focus, events: [], inbox: seed('inbox').inbox };
+const ctx = { today: '2026-11-07', now: '2026-11-07T18:00:00Z' };
+const xp0 = st.player.xp;
+let r = R.apply(st, { type: 'complete_step', line: 'JL-08', step: 'T-20261006-21', comment: 'done' }, ctx);
+assert.equal(r.xp, 50); assert.equal(r.state.player.xp, xp0 + 50); assert.equal(r.state.player.streak, 1);
+assert(!r.state.focus.some(f => f.step === 'T-20261006-21'), 'completed step leaves today');
+r = R.apply(r.state, { type: 'add_step', line: 'JL-08', title: 'Bench test', priority: 'high' }, ctx);
+assert(r.state.lines.find(l => l.id === 'JL-08').steps.some(s => s.id === 'T-20261107-01'));
+r = R.apply(r.state, { type: 'add_step', line: 'JL-08', title: 'Second' }, ctx);
+assert(r.state.lines.find(l => l.id === 'JL-08').steps.some(s => s.id === 'T-20261107-02'), 'ids increment');
+const sub = r.state.lines[0].steps[1].subs[0].id;
+r = R.apply(r.state, { type: 'toggle_sub', line: 'JL-04', step: 'T-20261006-05', sub }, ctx); assert.equal(r.xp, 10);
+r = R.apply(r.state, { type: 'reopen_step', line: 'JL-08', step: 'T-20261006-21' }, ctx); assert.equal(r.xp, -50);
+assert.throws(() => R.apply(r.state, { type: 'focus_add', line: 'JL-03', step: 'T-20261008-06' }, ctx) && R.apply(r.state, { type: 'nope' }, ctx));
+const u = R.urgency({ status: 'todo', planned: '2026-11-09' }, '2026-11-07'); assert.equal(u.days, 2); assert.equal(u.level, 'crit');
+const { parseCalendarMd } = require('../server/calendar.js');
+const c = parseCalendarMd('### Friday, November 6, 2026\n- **10:00 – 10:50 PST:** [Lecture](https://x)\n  - Location: Room 1\n- **All Day:** [HW](https://y)\n');
+assert.equal(c.events.length, 2); assert.equal(c.events[0].start, '10:00'); assert.equal(c.events[0].location, 'Room 1'); assert(c.events[1].allDay);
+console.log('self-test OK');

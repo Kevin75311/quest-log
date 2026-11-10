@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "inbox": [
+    {
+      "id": "i-seed1",
+      "t": "Confirm supplier ETA for the 24 mm piston set",
+      "at": "2026-11-07T08:00:00-08:00"
+    },
+    {
+      "id": "i-seed2",
+      "t": "Was the mislabeled \"263A\" midterm event fixed in Google Calendar?",
+      "at": "2026-11-07T08:00:00-08:00"
+    }
+  ]
+}

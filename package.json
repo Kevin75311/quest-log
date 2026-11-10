@@ -1,0 +1,14 @@
+{
+  "name": "quest-log",
+  "version": "1.0.0",
+  "description": "Game-style mission/todo/calendar board for personal-os, synced to GitHub. Zero npm dependencies.",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "GIT_ENABLED=false REPO_DIR=./data/dev node server/index.js",
+    "demo": "node scripts/build-demo.js",
+    "check": "node scripts/self-test.js"
+  }
+}

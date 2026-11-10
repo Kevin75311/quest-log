@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "player": {
+    "xp": 300,
+    "streak": 0,
+    "lastActive": null,
+    "history": []
+  },
+  "focus": [
+    {
+      "line": "JL-04",
+      "step": "T-20261006-05"
+    },
+    {
+      "line": "JL-08",
+      "step": "T-20261006-21"
+    },
+    {
+      "line": "JL-01",
+      "step": "C-JL01-01"
+    }
+  ]
+}
