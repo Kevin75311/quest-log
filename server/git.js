@@ -47,7 +47,7 @@ class GitSync {
     const msgs = this.pending.splice(0);
     try {
       const repo = this.o.repo;
-      await run(repo, ['add', '--', this.o.dataDir]);
+      await run(repo, ['add', '--', this.o.dataDir, ...(this.o.extraFiles || [])]);
       const diff = await run(repo, ['diff', '--cached', '--quiet']);
       if (!diff.ok) {
         const subject = msgs.length === 1 ? msgs[0] : `quest: ${msgs.length || 'several'} updates from Quest Log`;

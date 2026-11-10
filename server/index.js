@@ -59,8 +59,10 @@ function calendar() {
   return cal.data;
 }
 
-const git = new GitSync({ ...CFG.git, repo: CFG.repo, dataDir: CFG.dataDir, log, onExternalChange: () => { try { store.load(); log('Reloaded quest data after pull'); } catch (e) { log('reload failed', e.message); } } });
+const git = new GitSync({ ...CFG.git, repo: CFG.repo, dataDir: CFG.dataDir, extraFiles: ['tasks.md', 'job-lines.md'], log, onExternalChange: () => { try { store.load(); log('Reloaded quest data after pull'); } catch (e) { log('reload failed', e.message); } } });
 git.start();
+// Regenerate tasks.md / job-lines.md once at startup so they match the current data.
+setTimeout(() => { try { store.save(store.state, ctx().today); git.queue('docs: regenerate tasks.md and job-lines.md from Quest Log'); } catch (e) { log('regenerate failed', e.message); } }, 3000);
 function autoClose() {
   try { const r = R.apply(store.state, { type: 'auto_close' }, ctx()); if (r.msg) { store.save(r.state, ctx().today); git.queue(r.msg); log(r.msg); } }
   catch (e) { log('auto_close failed', e.message); }
